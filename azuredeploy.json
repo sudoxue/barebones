@@ -1,0 +1,185 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    
+    "parameters": {
+        "nameprefix": {
+            "type": "string",
+            "defaultValue": "barebones",
+            "metadata": {
+                "description": "Provide a name for the bare bones application"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "vmname": "[parameters('nameprefix')]",
+        "storagename": "[concat(parameters('nameprefix'),'storage')]",
+        "publicIP": "[concat(parameters('nameprefix'),'-PublicIP')]",
+        "nsg": "[concat(parameters('nameprefix'),'-nsg')]",
+        "vnetName": "[concat(parameters('nameprefix'),'-VirtualNetwork')]",
+        "subnet": "[concat(parameters('nameprefix'),'-VirtualNetwork-Subnet')]",
+        "netInterface": "[concat(parameters('nameprefix'),'-mikeVM-NetworkInterface')]"
+
+    },
+    "resources": [{
+        "name": "[toLower(variables('storagename'))]",
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2019-06-01",
+        "location": "[resourceGroup().location]",
+        "tags": {
+            "displayName": "[concat(parameters('nameprefix'),'Storage Account')]"
+        },
+        "sku": {
+            "name": "Standard_LRS"
+        },
+        "kind": "Storage"
+    },
+    {
+        "name": "[variables('publicIP')]",
+        "type": "Microsoft.Network/publicIPAddresses",
+        "apiVersion": "2019-11-01",
+        "location": "[resourceGroup().location]",
+        "tags": {
+            "displayName": "PublicIPAddress"
+        },
+        "properties": {
+            "publicIPAllocationMethod": "Dynamic",
+            "dnsSettings": {
+                "domainNameLabel": "[toLower(variables('vmname'))]"
+            }
+        }
+    },
+    {
+        "name": "[variables('nsg')]",
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "apiVersion": "2018-08-01",
+        "location": "[resourceGroup().location]",
+        "properties": {
+            "securityRules": [
+                {
+                    "name": "nsgRule1",
+                    "properties": {
+                        "description": "description",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "22",
+                        "sourceAddressPrefix": "*",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 100,
+                        "direction": "Inbound"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "[variables('vnetName')]",
+        "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2019-11-01",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg'))]"
+        ],
+        "tags": {
+            "displayName": "mikeVM-VirtualNetwork"
+        },
+        "properties": {
+            "addressSpace": {
+                "addressPrefixes": [
+                    "10.0.0.0/16"
+                ]
+            },
+            "subnets": [
+                {
+                    "name": "[variables('subnet')]",
+                    "properties": {
+                        "addressPrefix": "10.0.0.0/24",
+                        "networkSecurityGroup": {
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg'))]"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "[variables('netInterface')]",
+        "type": "Microsoft.Network/networkInterfaces",
+        "apiVersion": "2019-11-01",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIP'))]",
+            "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+        ],
+        "tags": {
+            "displayName": "mikeVM-NetworkInterface"
+        },
+        "properties": {
+            "ipConfigurations": [
+                {
+                    "name": "ipConfig1",
+                    "properties": {
+                        "privateIPAllocationMethod": "Dynamic",
+                        "publicIPAddress": {
+                            "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIP'))]"
+                        },
+                        "subnet": {
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnet'))]"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "[parameters('nameprefix')]",
+        "type": "Microsoft.Compute/virtualMachines",
+        "apiVersion": "2019-07-01",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/networkInterfaces', variables('netInterface'))]"
+        ],
+        "tags": {
+            "displayName": "[parameters('nameprefix')]"
+        },
+        "properties": {
+            "hardwareProfile": {
+                "vmSize": "Standard_B2ms"
+            },
+            "osProfile": {
+                "computerName": "[parameters('nameprefix')]",
+                "adminUsername": "adminUsername",
+                "adminPassword": "adminPassword"
+            },
+            "storageProfile": {
+                "imageReference": {
+                    "publisher": "Canonical",
+                    "offer": "UbuntuServer",
+                    "sku": "18.04-LTS",
+                    "version": "latest"
+                },
+                "osDisk": {
+                    "name": "mikeVM-OSDisk",
+                    "caching": "ReadWrite",
+                    "createOption": "FromImage"
+                }
+            },
+            "networkProfile": {
+                "networkInterfaces": [
+                    {
+                        "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('netInterface'))]"
+                    }
+                ]
+            },
+            "diagnosticsProfile": {
+                "bootDiagnostics": {
+                    "enabled": true,
+                    "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', toLower(variables('storagename')))).primaryEndpoints.blob]"
+                }
+            }
+        }
+    }],
+    "outputs": {}
+}
