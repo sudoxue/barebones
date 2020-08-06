@@ -9,9 +9,26 @@
             "metadata": {
                 "description": "Provide a name for the bare bones application"
             }
+<<<<<<< HEAD
         }
     },
     "functions": [],
+=======
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Username for the Virtual Machine."
+            }
+        },
+       "adminPasswordOrKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+            }
+        } 
+    },
+>>>>>>> 8/6/2020
     "variables": {
         "vmname": "[parameters('nameprefix')]",
         "storagename": "[concat(parameters('nameprefix'),'storage')]",
@@ -114,7 +131,11 @@
             "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
         ],
         "tags": {
+<<<<<<< HEAD
+            "displayName": "mikeVM-NetworkInterface"
+=======
             "displayName": "[variables('netInterface')]"
+>>>>>>> 8/6/2020
         },
         "properties": {
             "ipConfigurations": [
@@ -150,8 +171,13 @@
             },
             "osProfile": {
                 "computerName": "[parameters('nameprefix')]",
+<<<<<<< HEAD
                 "adminUsername": "adminUsername",
                 "adminPassword": "adminPassword"
+=======
+                "adminUsername": "[parameters('adminUsername')]",
+                "adminPassword": "[parameters('adminPasswordOrKey')]"
+>>>>>>> 8/6/2020
             },
             "storageProfile": {
                 "imageReference": {

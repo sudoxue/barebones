@@ -9,52 +9,12 @@
         "steps": [
             {
                 "name": "vmCredentials",
-                "label": "Azure Managed Application",
+                "label": "Bare Bones Application",
                 "bladeTitle": "Application credentials",
                 "subLabel": {
                     "preValidation": "Provide VM credentials",
                     "postValidation": "Great - let's move on!"
                 },
-                "elements": [
-                    {
-                        "name": "adminUserName",
-                        "type": "Microsoft.Compute.UserNameTextBox",
-                        "label": "Admin username",
-                        "osPlatform": "Windows",
-                        "constraints": {
-                            "required": true
-                        },
-                        "toolTip": "Provide admin username for the virtual machine"
-                    },
-                    {
-                        "name": "vmPwd",
-                        "type": "Microsoft.Compute.CredentialsCombo",
-                        "label": {
-                            "password": "Password",
-                            "confirmPassword": "Confirm password"
-                        },
-                        "osPlatform": "Windows",
-                        "options": {
-                            "hideConfirmation": false
-                        },
-                        "constraints": {
-                            "required": true
-                        },
-                        "toolTip": {
-                            "password": "Provide admin password for the virtual machine"
-                        },
-                        "visible": true
-                    }
-                ]
-            },
-            {
-                "name": "appSettings",
-                "label": "Application settings",
-                "subLabel": {
-                    "preValidation": "Configure the managed application",
-                    "postValidation": "Done!"
-                },
-                "bladeTitle": "Settings",
                 "elements": [
                     {
                         "name": "vmName",
@@ -69,72 +29,41 @@
                         }
                     },
                     {
-                        "name": "trialOrProd",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Trial or Production?",
-                        "defaultValue": "Trial",
-                        "toolTip": "For trial, cost will be minimal. For prod, resources are optimized.",
+                        "name": "adminUserName",
+                        "type": "Microsoft.Compute.UserNameTextBox",
+                        "label": "Adminusername",
+                        "osPlatform": "Linux",
                         "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Trial",
-                                    "value": "Trial"
-                                },
-                                {
-                                    "label": "Production",
-                                    "value": "Production"
-                                }
-                            ]
+                            "required": true
                         },
-                        "visible": true
+                        "toolTip": "Provide admin username for the virtual machine"
                     },
                     {
-                        "name": "virtualNetwork",
-                        "type": "Microsoft.Network.VirtualNetworkCombo",
+                        "name": "vmPwd",
+                        "type": "Microsoft.Compute.CredentialsCombo",
                         "label": {
-                            "virtualNetwork": "Virtual network",
-                            "subnets": "Subnets"
+                            "password": "Password",
+                            "confirmPassword": "Confirm password"
                         },
-                        "toolTip": {
-                            "virtualNetwork": "Virtual Network Name",
-                            "subnets": "Subnet requried for Azure Application"
-                        },
-                        "defaultValue": {
-                            "name": "app-vnet",
-                            "addressPrefixSize": "/22"
+                        "osPlatform": "Linux",
+                        "options": {
+                            "hideConfirmation": false
                         },
                         "constraints": {
-                            "minAddressPrefixSize": "/22"
+                            "required": true
                         },
-                        "subnets": {
-                            "subnet1": {
-                                "label": "Subnet name",
-                                "defaultValue": {
-                                    "name": "app-subnet",
-                                    "addressPrefixSize": "/24"
-                                },
-                                "constraints": {
-                                    "minAddressPrefixSize": "/24",
-                                    "minAddressCount": 12,
-                                    "requireContiguousAddresses": false
-                                }
-                            }
-                        }
+                        "toolTip": {
+                            "password": "Provide admin password for the virtual machine"
+                        },
+                        "visible": true
                     }
                 ]
             }
         ],
         "outputs": {
-            "vmName": "[steps('appSettings').vmName]",
-            "trialOrProduction": "[steps('appSettings').trialOrProd]",
-            "userName": "[steps('vmCredentials').adminUsername]",
-            "pwd": "[steps('vmCredentials').vmPwd.password]",
-            "applicationResourceName": "[steps('appSettings').vmName]",
-            "subnetName": "[steps('appSettings').virtualNetwork.subnets.subnet1.name]",
-            "subnetAddressPrefix": "[steps('appSettings').virtualNetwork.subnets.subnet1.addressPrefix]",
-            "vNetAddressPrefix": "[steps('appSettings').virtualNetwork.addressPrefix]",
-            "virtualNetworkName": "[steps('appSettings').virtualNetwork.name]",
-            "vNetRgName": "[steps('appSettings').virtualNetwork.resourceGroup]"
+            "nameprefix": "[steps('vmCredentials').vmName]",
+            "adminUsername": "[steps('vmCredentials').adminUserName]",
+            "pwd": "[steps('vmCredentials').vmPwd.password]"
         }
     }
 }
