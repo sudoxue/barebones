@@ -21,6 +21,7 @@
        "metadata": {
         "description": "Password or ssh key for the Virtual Machine."
       }
+    }
     },
     "variables": {
         "vmname": "[parameters('nameprefix')]",
