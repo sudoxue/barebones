@@ -8,7 +8,7 @@
             "adminUsername": {
               "value": "mxue"
             },
-            "pwd": {
+            "adminPasswordOrKey": {
               "value": "Microsoft@2020"
             }
           

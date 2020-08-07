@@ -63,7 +63,7 @@
         "outputs": {
             "nameprefix": "[steps('vmCredentials').vmName]",
             "adminUsername": "[steps('vmCredentials').adminUserName]",
-            "pwd": "[steps('vmCredentials').vmPwd.password]"
+            "adminPasswordOrKey": "[steps('vmCredentials').vmPwd.password]"
         }
     }
 }

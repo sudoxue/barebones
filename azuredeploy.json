@@ -9,9 +9,19 @@
             "metadata": {
                 "description": "Provide a name for the bare bones application"
             }
-        }
+        },
+        "adminUsername": {
+       "type": "string",
+        "metadata": {
+        "description": "User name for the Virtual Machine."
+      }
     },
-    "functions": [],
+       "adminPasswordOrKey": {
+       "type": "securestring",
+       "metadata": {
+        "description": "Password or ssh key for the Virtual Machine."
+      }
+    },
     "variables": {
         "vmname": "[parameters('nameprefix')]",
         "storagename": "[concat(parameters('nameprefix'),'storage')]",
@@ -83,7 +93,7 @@
             "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg'))]"
         ],
         "tags": {
-            "displayName": "mikeVM-VirtualNetwork"
+            "displayName": "[variables('vnetName')]"
         },
         "properties": {
             "addressSpace": {
@@ -150,8 +160,8 @@
             },
             "osProfile": {
                 "computerName": "[parameters('nameprefix')]",
-                "adminUsername": "adminUsername",
-                "adminPassword": "adminPassword"
+                "adminUsername": "[parameters('adminUsername')]",
+                "adminPassword": "[parameters('adminPasswordOrKey')]"
             },
             "storageProfile": {
                 "imageReference": {
