@@ -6,12 +6,12 @@
 
  
 
-The bare bones solution template serves to provide demo that can be packed, published and deployed as a Azure app in Azure Marketplace, 
+The bare bones solution template serves as a demo on deploying a VM in a customizable solution template with minimium resource requirements. 
 
 ## Resources created by this template
 
 The template created one storage account, 1 virtual net with subnets, 1 network security group. 1 datadisk and 1 virtual machine with ubuntu 18.4 image. 
-the bare bone is "hello world" solution template for intended to be deployed in Marketplace.
+
 
 ## parameters collected by CUID 
     "nameprefix"
