@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-##this is a barebone sample
-=======
-Bare Bones App Development Project
+# Bare Bones App Development Project
 
  
 
@@ -24,4 +21,3 @@ Azure Sanbox
 https://ms.portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/SandboxBlade
 
  
->>>>>>> 8/6/2020
