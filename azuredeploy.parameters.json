@@ -2,8 +2,15 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "nameprefix": {
-            "value": "mikevm"
-        }
+            "nameprefix": {
+              "value": "beare bone"
+            },
+            "adminUsername": {
+              "value": "mxue"
+            },
+            "pwd": {
+              "value": "Microsoft@2020"
+            }
+          
     }
 }
